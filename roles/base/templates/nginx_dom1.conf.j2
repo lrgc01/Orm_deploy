@@ -1,17 +1,17 @@
 server {
-       listen 80;
-       listen [::]:80;
-       server_name {{ domain1 }};
-       return 301 https://{{ domain1 }}$request_uri;
+       listen 80 default_server;
+       listen [::]:80 default_server;
+       server_name _;
+       return 301 https://_$request_uri;
 }
 
 server {
-       listen 443 ssl;
-       listen [::]:443 ssl;
+       listen 443 ssl default_server;
+       listen [::]:443 ssl default_server;
 
        include snippets/{{ domain1 }}-cert.conf;
 
-       server_name {{ domain1 }};
+       server_name _;
 
        root {{ domain1_rootdir }};
        index index.php index.html index.htm index.nginx-debian.html;

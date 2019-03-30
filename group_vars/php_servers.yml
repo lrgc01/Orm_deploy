@@ -22,6 +22,11 @@ web_service             : "nginx"
 
 #
 domain1_rootdir         : "{{ www_htmldir }}/Orm_site"
+git_data_dir		: "/var/git"
+git_separate_dir	: "{{ git_data_dir }}/Orm_site.git"
+sys_username		: "azureuser"
+github_source_repo	: "https://github.com/lrgc01/Orm_test.git"
+git_branch		: "stable"
 #
 
 #
@@ -70,6 +75,7 @@ dep_pkg_list		:
    - { pkg : "zip"             }
    - { pkg : "unzip"           }
    - { pkg : "mariadb-client"  }
+   - { pkg : "git"             }
 
 #
 # dir, file, template or link, depending on key values
@@ -92,7 +98,7 @@ dir_file_tmpl_list     :
    - { types : [ "link" ]         , src  : "/etc/nginx/sites-available/{{ domain1 }}.conf" , dest : "/etc/nginx/sites-enabled/{{ domain1 }}.conf" }
    - { types : [ "tmpl" ]         , dest : "/etc/nginx/snippets"        , tmpl : "nginx_dom1-cert.conf.j2" , name : "{{ domain1 }}-cert.conf"  , srv : "{{ web_service }}" }
    - { types : [ "absent" ]       , dest : "/etc/nginx/sites-enabled/default" }
-   - { types : [ "dir" ]          , dest : "/var/git"                     }
+   - { types : [ "dir" ]          , dest : "{{ git_data_dir }}"                     }
 #   - { types : [ "absent" ]       , dest : "{{ www_htmldir }}/README.md" }
 #   - { types : [ "absent" ]       , dest : "/etc/nginx/sites-enabled/nginx-default" }
 
@@ -102,6 +108,9 @@ dir_file_tmpl_list     :
 ini_file_list           :
    - { path : "/etc/php/7.2/fpm/php.ini" , section : "PHP" , option : "allow_url_fopen" , value : "Off" }
    - { path : "/etc/php/7.2/fpm/php.ini" , section : "PHP" , option : "memory_limit"    , value : "128M" }
+
+cron_list		:
+- { name: "Update {{ domain1_rootdir }}" , minute: "*/5" , job: "git --git-dir={{ git_separate_dir }} --work-tree={{ domain1_rootdir }} pull --quiet"  , user: "{{ sys_username }}" , state: "present" }
 
 # Define local and remote files both for upload (copy)
 # and download (fetch).
@@ -145,11 +154,14 @@ auth_keys_file_list     :
 #
 # gitcfg role
 #
-gitRepoList	:
+gitCloneList	:
    - {
-	repo : "https://github.com/lrgc01/Orm_test.git" ,
+	repo : "{{ github_source_repo }}" ,
         dest : "{{ domain1_rootdir }}" ,
-        gitDir : "/var/git/Orm_test.git"
+        gitDir : "{{ git_separate_dir }}" ,
+        update_y_n : false ,
+        clone_y_n : true,
+        branch : "{{ git_branch }}" ,
      }
         
 ###########################################
@@ -216,3 +228,11 @@ ssl_up_down_files_list 	:
 
 #--- End of SSLCrt role block
 
+#
+# "finals"'s role block
+#
+later_dirs_config_list       :
+   - { enabled : true , path : "{{ git_data_dir }}"    , owner: "{{ sys_username }}" , group : "{{ sys_username }}" , mode : "u+rw,a+rX" , recurse : true , }
+   - { enabled : true , path : "{{ domain1_rootdir }}" , owner: "{{ sys_username }}" , group : "{{ sys_username }}" , mode : "u+rw,a+rX" , recurse : true , }
+
+#--- End of "finals" role block

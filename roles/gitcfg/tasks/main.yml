@@ -27,7 +27,10 @@
     repo: "{{ item.repo }}"
     dest: "{{ item.dest }}"
     separate_git_dir: "{{ item.gitDir }}"
-  loop: "{{ gitRepoList }}"
-  when: gitRepoList[0]
+    update: "{{ item.update_y_n | default(omit) }}"
+    clone: "{{ item.clone_y_n | default(omit) }}"
+    version: "{{ item.branch | default(omit) }}"
+  loop: "{{ gitCloneList }}"
+  when: gitCloneList[0]
   register: git_repo_cloned
   tags: git_config, git_clone
