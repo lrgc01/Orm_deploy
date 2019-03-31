@@ -122,47 +122,103 @@ to one site. They can be found here:
 ----------------------------------------------------------------------
 THE PLAYBOOKs
 ----------------------------------------------------------------------
-Here the output of "ansible-playbook -i frondsrv --list-tasks PHPservers.yml" 
+Here the output of "ansible-playbook -i frontsrv --list-tasks PHPservers.yml" 
 command:
 
 ```
 playbook: PHPservers.yml
 
-  play #1 (php_servers): php_servers    TAGS: []
+  play #1 (php_servers): php_servers	TAGS: []
     tasks:
-      common : Install remote python if not installed ------------      TAGS: [bootstrap_python]
-      common : Apt keys - add a repository key -------------------      TAGS: [update_repository]
-      common : Apt database - add new repo to repository listing -      TAGS: [update_repository]
-      common : Update cache and upgrade (may take a time) --------      TAGS: [update_repository]
-      common : Install vary basic packages to run ansible --------      TAGS: [install_base_pkg]
-      base : Install dependency packages -----------------------        TAGS: [install_dep_pkg]
-      base : Ensure directories dir_file_tmpl_list.types=dir ---        TAGS: [config_files, deploy_templates]
-      base : Remove undesired files (absent in item.types) -----        TAGS: [config_files, deploy_templates]
-      base : Deploy templates dir_file_tmpl_list.types=tmpl ----        TAGS: [config_files, deploy_templates]
-      base : Make proper links dir_file_tmpl_list.types=link ---        TAGS: [config_files, deploy_templates]
-      base : Upload some files from a list when action=upload --        TAGS: [config_files, copy_files]
-      base : Restart service after tmpl/file/link change -------        TAGS: [config_files, copy_files, deploy_templates]
-      base : Set some ini type files ---------------------------        TAGS: [config_files]
-      base : Download and unarchive a .tgz, .rpm, etc packet ---        TAGS: [config_files]
-      base : Configure cron ------------------------------------        TAGS: [cron_config]
-      base : Ensure services are started and enabled -----------        TAGS: [install_dep_pkg]
-      phpcfg : Composer- require, remove, but no create-project --      TAGS: [php_config]
-      phpcfg : Composer create-project using command line --------      TAGS: [php_config]
-      users : Create some general purpose users -----------------       TAGS: [base_users]
-      users : Retrieve priv key from list of users --------------       TAGS: [auth_keys, base_users]
-      users : Fill in authorized_keys to each user of a list ----       TAGS: [auth_keys, base_users]
-      gitcfg : Grant repodir permissions to git user -------------      TAGS: [git_config]
-      gitcfg : Create some git projects on server ----------------      TAGS: [git_config]
-      gitcfg : Clone a remote repo in a separate git dir ---------      TAGS: [git_clone, git_config]
-      SSLcrt : Generate private key for account and csr ----------      TAGS: [acme_account, ssl_certificate]
-      SSLcrt : Create local CSR certificate ----------------------      TAGS: [ssl_certificate]
-      SSLcrt : Create ACME account with respective email ---------      TAGS: [acme_account, ssl_certificate]
-      SSLcrt : Create certificate - 1st step challenge -----------      TAGS: [ssl_certificate]
-      SSLcrt : Create directory structure for challenge ----------      TAGS: [ssl_certificate]
-      SSLcrt : Copy resource to web site to complete the 2nd step       TAGS: [ssl_certificate]
-      SSLcrt : Create certificate - 2nd step challenge -get certs-      TAGS: [ssl_certificate]
-      SSLcrt : Copy new cert and key to web server's place -------      TAGS: [ssl_certificate, test2]
-      SSLcrt : Download cert and key files if needed -------------      TAGS: [key_cert_copy_only, ssl_certificate, test2]
+      common : Install remote python if not installed ------------	TAGS: [bootstrap_python]
+      common : Install requisite packages to run apt_key ---------	TAGS: [apt_keys, update_repository]
+      common : Apt keys - add a repository key -------------------	TAGS: [apt_keys, update_repository]
+      common : Apt database - add new repo to repository listing -	TAGS: [update_repository]
+      common : Update cache and upgrade (may take a time) --------	TAGS: [update_repository]
+      common : Install vary basic packages to run ansible --------	TAGS: [install_base_pkg]
+      base : Install dependency packages -----------------------	TAGS: [install_dep_pkg]
+      base : Ensure directories dir_file_tmpl_list.types=dir ---	TAGS: [config_files, deploy_templates]
+      base : Remove undesired files (absent in item.types) -----	TAGS: [config_files, deploy_templates]
+      base : Deploy templates dir_file_tmpl_list.types=tmpl ----	TAGS: [config_files, deploy_templates]
+      base : Make proper links dir_file_tmpl_list.types=link ---	TAGS: [config_files, deploy_templates]
+      base : Upload some files from a list when action=upload --	TAGS: [config_files, copy_files]
+      base : Restart service after tmpl/file/link change -------	TAGS: [config_files, copy_files, deploy_templates]
+      base : Set some ini type files ---------------------------	TAGS: [config_files]
+      base : Download and unarchive a .tgz, .rpm, etc packet ---	TAGS: [config_files]
+      base : Configure cron ------------------------------------	TAGS: [cron_config]
+      base : Ensure services are started and enabled -----------	TAGS: [install_dep_pkg]
+      phpcfg : Composer- require, remove, but no create-project --	TAGS: [php_config]
+      phpcfg : Composer create-project using command line --------	TAGS: [php_config]
+      users : Create some general purpose users -----------------	TAGS: [base_users]
+      users : Retrieve priv key from list of users --------------	TAGS: [auth_keys, base_users]
+      users : Fill in authorized_keys to each user of a list ----	TAGS: [auth_keys, base_users]
+      gitcfg : Grant repodir permissions to git user -------------	TAGS: [git_config]
+      gitcfg : Create some git projects on server ----------------	TAGS: [git_config]
+      gitcfg : Clone a remote repo in a separate git dir ---------	TAGS: [git_clone, git_config]
+      SSLcrt : Generate private key for account and csr ----------	TAGS: [acme_account, selfsigned_crt, ssl_certificate]
+      SSLcrt : Create local CSR certificate ----------------------	TAGS: [selfsigned_crt, ssl_certificate]
+      SSLcrt : Create ACME account with respective email ---------	TAGS: [acme_account, ssl_certificate]
+      SSLcrt : Generate selfsigned certificate -------------------	TAGS: [selfsigned_crt, ssl_certificate]
+      SSLcrt : Create certificate - 1st step challenge -----------	TAGS: [ssl_certificate]
+      SSLcrt : Create directory structure for challenge ----------	TAGS: [ssl_certificate]
+      SSLcrt : Copy resource to web site to complete the 2nd step	TAGS: [ssl_certificate]
+      SSLcrt : Create certificate - 2nd step challenge -get certs-	TAGS: [ssl_certificate]
+      SSLcrt : Copy new cert and key to web server's place -------	TAGS: [ssl_certificate]
+      SSLcrt : Create (or update) PEM file with CRT and KEY ------	TAGS: [ssl_certificate]
+      SSLcrt : Download cert and key files if needed -------------	TAGS: [key_cert_copy_only, ssl_certificate]
+      finals : Deploy later specific templates -------------------	TAGS: [final_config]
+      finals : Create later directories and set permissions ------	TAGS: [final_config]
+      finals : Add or change line in config files ----------------	TAGS: [final_config]
+      finals : Restart service after later tmpl/file/link change -	TAGS: [final_config]
+```
+
+And the output of "ansible-playbook -i dbsrv --list-tasks DBservers.yml" 
+
+```
+playbook: DBservers.yml
+
+  play #1 (db_servers): db_servers	TAGS: []
+    tasks:
+      common : Install remote python if not installed ------------	TAGS: [bootstrap_python]
+      common : Install requisite packages to run apt_key ---------	TAGS: [apt_keys, update_repository]
+      common : Apt keys - add a repository key -------------------	TAGS: [apt_keys, update_repository]
+      common : Apt database - add new repo to repository listing -	TAGS: [update_repository]
+      common : Update cache and upgrade (may take a time) --------	TAGS: [update_repository]
+      common : Install vary basic packages to run ansible --------	TAGS: [install_base_pkg]
+      base : Install dependency packages -----------------------	TAGS: [install_dep_pkg]
+      base : Ensure directories dir_file_tmpl_list.types=dir ---	TAGS: [config_files, deploy_templates]
+      base : Remove undesired files (absent in item.types) -----	TAGS: [config_files, deploy_templates]
+      base : Deploy templates dir_file_tmpl_list.types=tmpl ----	TAGS: [config_files, deploy_templates]
+      base : Make proper links dir_file_tmpl_list.types=link ---	TAGS: [config_files, deploy_templates]
+      base : Upload some files from a list when action=upload --	TAGS: [config_files, copy_files]
+      base : Restart service after tmpl/file/link change -------	TAGS: [config_files, copy_files, deploy_templates]
+      base : Set some ini type files ---------------------------	TAGS: [config_files]
+      base : Download and unarchive a .tgz, .rpm, etc packet ---	TAGS: [config_files]
+      base : Configure cron ------------------------------------	TAGS: [cron_config]
+      base : Ensure services are started and enabled -----------	TAGS: [install_dep_pkg]
+      users : Create some general purpose users -----------------	TAGS: [base_users]
+      users : Retrieve priv key from list of users --------------	TAGS: [auth_keys, base_users]
+      users : Fill in authorized_keys to each user of a list ----	TAGS: [auth_keys, base_users]
+      SSLcrt : Generate private key for account and csr ----------	TAGS: [acme_account, selfsigned_crt, ssl_certificate]
+      SSLcrt : Create local CSR certificate ----------------------	TAGS: [selfsigned_crt, ssl_certificate]
+      SSLcrt : Create ACME account with respective email ---------	TAGS: [acme_account, ssl_certificate]
+      SSLcrt : Generate selfsigned certificate -------------------	TAGS: [selfsigned_crt, ssl_certificate]
+      SSLcrt : Create certificate - 1st step challenge -----------	TAGS: [ssl_certificate]
+      SSLcrt : Create directory structure for challenge ----------	TAGS: [ssl_certificate]
+      SSLcrt : Copy resource to web site to complete the 2nd step	TAGS: [ssl_certificate]
+      SSLcrt : Create certificate - 2nd step challenge -get certs-	TAGS: [ssl_certificate]
+      SSLcrt : Copy new cert and key to web server's place -------	TAGS: [ssl_certificate]
+      SSLcrt : Create (or update) PEM file with CRT and KEY ------	TAGS: [ssl_certificate]
+      SSLcrt : Download cert and key files if needed -------------	TAGS: [key_cert_copy_only, ssl_certificate]
+      DB_adm : Create DBs on respective hosts --------------------	TAGS: [create_databases, databases]
+      DB_adm : Grant user privileges in DBs ----------------------	TAGS: [databases, grant_privileges]
+      restore : Upload backup files ------------------------------	TAGS: [restore, upload_to_restore]
+      restore : Restore file hierarchy (extract backup from archive)	TAGS: [restore, restore_files]
+      restore : Restore via shell specific commands ---------------	TAGS: [restore, restore_via_shell]
+      finals : Deploy later specific templates -------------------	TAGS: [final_config]
+      finals : Create later directories and set permissions ------	TAGS: [final_config]
+      finals : Add or change line in config files ----------------	TAGS: [final_config]
+      finals : Restart service after later tmpl/file/link change -	TAGS: [final_config]
 ```
 
 The hiphens o minus signs are used just to make the output easier to 
@@ -217,7 +273,7 @@ And this is the playbook command itself:
 As explained above, some other extra-vars may be used, but all have 
 their own default values already defined in roles/\*/defaults/main.yml.
 
-It is possible to run just the git parts:
+It is possible to specify --tags and run just the "git_config" parts:
 
 (after the shell script header!!)
 ```
@@ -225,7 +281,7 @@ $ ansible-playbook \
     --extra-vars \
     "basedir=${BASEDIR} confdir=${CONFDIR} sshconf=${SSHCONF}" \
     --tags "git_config" \
-    Site.yml
+    PlaybookName.yml
 ```
 
 ----------------------------------------------------------------------
