@@ -35,21 +35,14 @@ git_branch		: "stable"
 key_base_path           : "/etc/ssl/private"
 cert_base_path          : "/etc/ssl/certs"
 domain1                 : "{{ inventory_hostname }}"
-cert_name_prefix        : "stg-letsencrypt"
-staging_account_key     : "stg-letsencrypt-account-key.key"
+cert_name_prefix        : "selfsigned"
+account_key             : "account-key.key"
+#cert_name_prefix        : "stg-letsencrypt"
+#account_key             : "stg-letsencrypt-account-key.key"
 ##cert_name_prefix        : "pro-{{ domain1 }}"
-##production_account_key  : "pro-letsencrypt-account-key.key"
+##account_key             : "pro-letsencrypt-account-key.key"
 #
 #
-
-# DB AWS instance used widely
-#db_host : "websiteinstance.ctxnidj2utoz.us-east-2.rds.amazonaws.com"
-db_host : "localhost"
-db_name : "my_test"
-db_user : "dbuser1"
-db_pass : "dbuserpass123"
-db_admuser : "root"
-db_admpass : ""
 
 # These below are used with remote ansible python script and once installed it's better not remove them
 base_dep_pkg_list:
@@ -99,8 +92,8 @@ dir_file_tmpl_list     :
    - { types : [ "tmpl" ]         , dest : "/etc/nginx/snippets"        , tmpl : "nginx_dom1-cert.conf.j2" , name : "{{ domain1 }}-cert.conf"  , srv : "{{ web_service }}" }
    - { types : [ "absent" ]       , dest : "/etc/nginx/sites-enabled/default" }
    - { types : [ "dir" ]          , dest : "{{ git_data_dir }}"                     }
+   - { types : [ "absent" ]       , dest : "/etc/nginx/sites-enabled/nginx-default" }
 #   - { types : [ "absent" ]       , dest : "{{ www_htmldir }}/README.md" }
-#   - { types : [ "absent" ]       , dest : "/etc/nginx/sites-enabled/nginx-default" }
 
 #
 # Some INI file configuration (php mainly, but may be others)
@@ -144,11 +137,14 @@ up_down_files_list :
 #--- End of base role block
 
 ###########################################
+#
+# "users"'s role block
+#
 # Authorized_keys to fullfill in the server
 auth_keys_file_list     :
    - { username : "azureuser"      , pub_key_file : "conf.d/testkey" }
 
-#--- End of user stugg role block
+#--- End of user stuff role block
 
 ###########################################
 #
@@ -178,7 +174,8 @@ gitCloneList	:
 cert_hash_list		:
    -  {
         enabled			: true ,
-        account_priv_key_path	: "{{ key_base_path }}/{{ staging_account_key }}",
+        selfsigned		: true ,
+        account_priv_key_path	: "{{ key_base_path }}/{{ account_key }}",
         csr_priv_key_path	: "{{ key_base_path }}/{{ cert_name_prefix }}-csr-key.key",
         csr_cert_path		: "{{ cert_base_path }}/{{ cert_name_prefix }}.csr",
         crt_cert_path		: "{{ cert_base_path }}/{{ cert_name_prefix }}.crt",
@@ -202,6 +199,7 @@ cert_hash_list		:
         web_rootdir		: "{{ domain1_rootdir }}"
       }
 # Below other variables depend on the cert_hash_list above.
+# In a near future this list maybe mapped from the cert_hash_list in runtime
 server_cert_n_key_list	:
    -  { 
         src  : "{{ cert_hash_list[0].csr_priv_key_path }}",
@@ -212,6 +210,7 @@ server_cert_n_key_list	:
         dest : "{{ cert_hash_list[0].server_cert_path }}"
       }
 # srv defines if a service will be restarted upon modification in file upload
+# In a near future this list maybe mapped from the cert_hash_list in runtime
 ssl_up_down_files_list 	:
    -  { 
         local  : "{{ cert_hash_list[0].local_certkey_path }}",

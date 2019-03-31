@@ -11,7 +11,9 @@
     force: "{{ item.force_cert_y_n }}"
     remaining_days: "{{ item.remaining_days }}"
   loop: "{{ cert_hash_list }}"
-  when: private_key_created is success and csr_cert_created is success and cert_hash_list is defined and item.enabled
+  when: private_key_created is success and csr_cert_created is success 
+        and cert_hash_list is defined and item.enabled
+        and not item.selfsigned 
   register: cert_challenge_first
   tags: ssl_certificate
 

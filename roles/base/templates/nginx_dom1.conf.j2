@@ -1,11 +1,11 @@
 server {
        listen 80 default_server;
        listen [::]:80 default_server;
-       server_name _;
-       return 301 https://_$request_uri;
-}
+       #server_name _;
+       #return 301 https://_$request_uri;
+#}
 
-server {
+#server {
        listen 443 ssl default_server;
        listen [::]:443 ssl default_server;
 
