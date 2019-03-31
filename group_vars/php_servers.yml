@@ -62,7 +62,7 @@ base_dep_pkg_list:
 dep_pkg_list		:
    - { pkg : "{{ web_service }}" ,  srv : "{{ web_service }}" , state : "started" , enabled : true }
    - { pkg : "php"             }
-   - { pkg : "php-fpm"           ,  srv : "php7.2-fpm"        , state : "started" , enabled : true }
+   - { pkg : "php-fpm"           ,  srv : "php7.0-fpm"        , state : "started" , enabled : true }
    - { pkg : "php-mysql"       }
    - { pkg : "php-gd"          }
    - { pkg : "zip"             }
@@ -175,6 +175,7 @@ cert_hash_list		:
    -  {
         enabled			: true ,
         selfsigned		: true ,
+        pem_file                : false ,
         account_priv_key_path	: "{{ key_base_path }}/{{ account_key }}",
         csr_priv_key_path	: "{{ key_base_path }}/{{ cert_name_prefix }}-csr-key.key",
         csr_cert_path		: "{{ cert_base_path }}/{{ cert_name_prefix }}.csr",

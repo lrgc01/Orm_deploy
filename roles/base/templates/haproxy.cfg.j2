@@ -61,5 +61,5 @@ backend letsencrypt-BE
 backend nginx
     balance     roundrobin
     redirect scheme https code 301 if !{ ssl_fc }
-    server  srv1 10.0.0.4:80 check
-    server  srv2 10.0.0.6:80 check
+    server  srv1 {{ be_srv_1 }}:80 check
+    server  srv2 {{ be_srv_2 }}:80 check
