@@ -15,7 +15,8 @@ pip_install_list        : [ "botocore" , "boto" , "boto3" ]
 #
 # Our web server definitions
 #
-my_workdir              : "~azureuser"
+sys_username            : "azureuser"
+my_workdir              : "~{{ sys_username }}"
 www_basedir             : "/var/www"
 www_htmldir             : "{{ www_basedir }}/html"
 www_username            : "www-data"
@@ -133,7 +134,7 @@ unarchive_list  :
 #
 # Authorized_keys to fullfill in the server
 auth_keys_file_list     :
-   - { username : "azureuser"      , pub_key_file : "conf.d/testkey" }
+   - { username : "{{ sys_username }}"      , pub_key_file : "conf.d/testkey" }
 
 #--- End of user stuff role block
 
@@ -260,7 +261,7 @@ sql_bkp_cmd   : "mysqldump -u {{ db_admuser }} -h {{ db_host }} -p{{ db_admpass 
 #sql_rest_cmd  : "mysql -u {{ db_admuser }} -h {{ db_host }} -p{{ db_admpass }} "
 #sql_bkp_cmd   : "mysqldump --opt "
 sql_rest_cmd  : "mysql"
-remote_bkpdir : "~azureuser"
+remote_bkpdir : "{{ my_workdir }}"
 DB_bkp        : "{{ bkptag }}.sql.gz"
 sql_ini_test  : "sql.gz"
 docs_bkp      : "{{ bkptag }}.documents.tgz"
