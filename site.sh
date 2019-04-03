@@ -76,7 +76,8 @@ export ANSIBLE_SSH_ARGS="-C -o ControlMaster=auto -o ControlPersist=60s -F ${SSH
 
 
 # First, full, playbook running
-ansible-playbook -i frontsrv --extra-vars "gather_y_n=false update_cache_y_n=no basedir=${BASEDIR} confdir=${CONFDIR} sshconf=${SSHCONF}" PHPservers.yml 
+#ansible-playbook -i frontsrv --extra-vars "gather_y_n=false update_cache_y_n=no basedir=${BASEDIR} confdir=${CONFDIR} sshconf=${SSHCONF}" PHPservers.yml 
+ansible-playbook -i hasrv --extra-vars "gather_y_n=false update_cache_y_n=no basedir=${BASEDIR} confdir=${CONFDIR} sshconf=${SSHCONF}" HAservers.yml 
 ansible-playbook -i dbsrv --extra-vars "gather_y_n=false update_cache_y_n=no basedir=${BASEDIR} confdir=${CONFDIR} sshconf=${SSHCONF}" DBservers.yml 
 
 # After first install, the tag "bootstrap_python" can be safely skipped:
