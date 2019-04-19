@@ -20,12 +20,14 @@ GENERAL STRUCTURE
 Basically an ansible with some external configs to SSH access - check 
 \*.sh
 
-There are at least to inventory in this approach:
+The inventories in this approach:
  - frontsrv
+ - hasrv
  - dbsrv
 
-There are two playbooks YAML file: 
+There are some playbooks YAML file: 
  - PHPservers.yml
+ - HAservers.yml
  - DBservers.yml
 
  - Folder hierarchy (roles):
@@ -172,6 +174,45 @@ playbook: PHPservers.yml
       finals : Restart service after later tmpl/file/link change -	TAGS: [final_config]
 ```
 
+The output of "ansible-playbook -i hasrv --list-tasks HAservers.yml" 
+```
+playbook: HAservers.yml
+
+  play #1 (ha_servers): ha_servers      TAGS: []
+    tasks:
+      common : Install remote python if not installed ------------      TAGS: [bootstrap_python]
+      common : Install requisite packages to run apt_key ---------      TAGS: [apt_keys, update_repository]
+      common : Apt keys - add a repository key -------------------      TAGS: [apt_keys, update_repository]
+      common : Apt database - add new repo to repository listing -      TAGS: [update_repository]
+      common : Update cache and upgrade (may take a time) --------      TAGS: [update_repository]
+      common : Install vary basic packages to run ansible --------      TAGS: [install_base_pkg]
+      base : Install dependency packages -----------------------        TAGS: [install_dep_pkg]
+      base : Ensure directories dir_file_tmpl_list.types=dir ---        TAGS: [config_files, deploy_templates]
+      base : Remove undesired files (absent in item.types) -----        TAGS: [config_files, deploy_templates]
+      base : Deploy templates dir_file_tmpl_list.types=tmpl ----        TAGS: [config_files, deploy_templates]
+      base : Make proper links dir_file_tmpl_list.types=link ---        TAGS: [config_files, deploy_templates]
+      base : Upload some files from a list when action=upload --        TAGS: [config_files, copy_files]
+      base : Restart service after tmpl/file/link change -------        TAGS: [config_files, copy_files, deploy_templates]
+      base : Set some ini type files ---------------------------        TAGS: [config_files]
+      base : Download and unarchive a .tgz, .rpm, etc packet ---        TAGS: [config_files]
+      base : Configure cron ------------------------------------        TAGS: [cron_config]
+      base : Ensure services are started and enabled -----------        TAGS: [install_dep_pkg]
+      users : Create some general purpose users -----------------       TAGS: [base_users]
+      users : Retrieve priv key from list of users --------------       TAGS: [auth_keys, base_users]
+      users : Fill in authorized_keys to each user of a list ----       TAGS: [auth_keys, base_users]
+      SSLcrt : Generate private key for account and csr ----------      TAGS: [acme_account, selfsigned_crt, ssl_certificate]
+      SSLcrt : Create local CSR certificate ----------------------      TAGS: [selfsigned_crt, ssl_certificate]
+      SSLcrt : Create ACME account with respective email ---------      TAGS: [acme_account, ssl_certificate]
+      SSLcrt : Generate selfsigned certificate -------------------      TAGS: [selfsigned_crt, ssl_certificate]
+      SSLcrt : Create certificate - 1st step challenge -----------      TAGS: [ssl_certificate]
+      SSLcrt : Create directory structure for challenge ----------      TAGS: [ssl_certificate]
+      SSLcrt : Copy resource to web site to complete the 2nd step       TAGS: [ssl_certificate]
+      SSLcrt : Create certificate - 2nd step challenge -get certs-      TAGS: [ssl_certificate]
+      SSLcrt : Copy new cert and key to web server's place -------      TAGS: [ssl_certificate]
+      SSLcrt : Create (or update) PEM file with CRT and KEY ------      TAGS: [ssl_certificate]
+      SSLcrt : Download cert and key files if needed -------------      TAGS: [key_cert_copy_only, ssl_certificate]
+```
+
 And the output of "ansible-playbook -i dbsrv --list-tasks DBservers.yml" 
 
 ```
@@ -199,17 +240,6 @@ playbook: DBservers.yml
       users : Create some general purpose users -----------------	TAGS: [base_users]
       users : Retrieve priv key from list of users --------------	TAGS: [auth_keys, base_users]
       users : Fill in authorized_keys to each user of a list ----	TAGS: [auth_keys, base_users]
-      SSLcrt : Generate private key for account and csr ----------	TAGS: [acme_account, selfsigned_crt, ssl_certificate]
-      SSLcrt : Create local CSR certificate ----------------------	TAGS: [selfsigned_crt, ssl_certificate]
-      SSLcrt : Create ACME account with respective email ---------	TAGS: [acme_account, ssl_certificate]
-      SSLcrt : Generate selfsigned certificate -------------------	TAGS: [selfsigned_crt, ssl_certificate]
-      SSLcrt : Create certificate - 1st step challenge -----------	TAGS: [ssl_certificate]
-      SSLcrt : Create directory structure for challenge ----------	TAGS: [ssl_certificate]
-      SSLcrt : Copy resource to web site to complete the 2nd step	TAGS: [ssl_certificate]
-      SSLcrt : Create certificate - 2nd step challenge -get certs-	TAGS: [ssl_certificate]
-      SSLcrt : Copy new cert and key to web server's place -------	TAGS: [ssl_certificate]
-      SSLcrt : Create (or update) PEM file with CRT and KEY ------	TAGS: [ssl_certificate]
-      SSLcrt : Download cert and key files if needed -------------	TAGS: [key_cert_copy_only, ssl_certificate]
       DB_adm : Create DBs on respective hosts --------------------	TAGS: [create_databases, databases]
       DB_adm : Grant user privileges in DBs ----------------------	TAGS: [databases, grant_privileges]
       restore : Upload backup files ------------------------------	TAGS: [restore, upload_to_restore]

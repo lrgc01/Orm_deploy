@@ -1,0 +1,4 @@
+---
+- import_tasks: 10-create.yml
+- import_tasks: 20-configure.yml
+- import_tasks: 30-restart.yml
